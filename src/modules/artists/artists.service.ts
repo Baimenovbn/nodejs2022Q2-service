@@ -1,26 +1,36 @@
 import { Injectable } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
+import { ArtistsRepository } from './artists.repository';
+import { ResourceNotFoundError } from '../../models/errors/resource-not-found.error';
 
 @Injectable()
 export class ArtistsService {
   create(createArtistDto: CreateArtistDto) {
-    return 'This action adds a new artist';
+    return ArtistsRepository.create(createArtistDto);
   }
 
   findAll() {
-    return `This action returns all artists`;
+    return ArtistsRepository.getAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} artist`;
+  findOne(id: string) {
+    const artist = ArtistsRepository.getById(id);
+    if (!artist) throw new ResourceNotFoundError('Artist');
+    return artist;
   }
 
-  update(id: number, updateArtistDto: UpdateArtistDto) {
-    return `This action updates a #${id} artist`;
+  update(id: string, updateArtistDto: UpdateArtistDto) {
+    const artist = this.findOne(id);
+
+    return ArtistsRepository.update(id, {
+      ...artist,
+      ...updateArtistDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} artist`;
+  remove(id: string) {
+    const user = this.findOne(id);
+    return ArtistsRepository.removeById(user.id);
   }
 }
