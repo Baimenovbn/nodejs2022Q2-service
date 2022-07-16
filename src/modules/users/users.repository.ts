@@ -1,9 +1,9 @@
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { Database } from '../../DB';
 
 export class UsersRepository {
-  private static userTable = new Map<string, User>();
   private static initialVersion = 1;
 
   private static generateDefaultUser() {
@@ -17,25 +17,25 @@ export class UsersRepository {
   }
 
   static getById(id: string) {
-    return this.userTable.get(id);
+    return Database.usersTable.get(id);
   }
 
   static getAll() {
-    return Array.from(this.userTable.values());
+    return Array.from(Database.usersTable.values());
   }
 
   static removeById(id: string) {
-    return this.userTable.delete(id);
+    return Database.usersTable.delete(id);
   }
 
   static create(user: CreateUserDto) {
     const newUser = { ...user, ...this.generateDefaultUser() };
-    this.userTable.set(newUser.id, newUser);
+    Database.usersTable.set(newUser.id, newUser);
     return newUser;
   }
 
   static update(id: string, updatedUser: User) {
-    this.userTable.set(id, updatedUser);
+    Database.usersTable.set(id, updatedUser);
     return updatedUser;
   }
 }
