@@ -19,6 +19,8 @@ npm install
 
 ## Running application
 
+* You can set port by renaming *.env.example* to *.env* and setting <PORT> variable inside
+
 ```
 npm start
 ```
