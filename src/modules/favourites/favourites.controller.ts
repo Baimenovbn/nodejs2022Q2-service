@@ -1,45 +1,46 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Post, Param, Get, Delete, HttpCode } from '@nestjs/common';
 import { FavouritesService } from './favourites.service';
-import { CreateFavouriteDto } from './dto/create-favourite.dto';
-import { UpdateFavouriteDto } from './dto/update-favourite.dto';
+import { ValidateUuidParam } from '../../models/pipes/validate-uuid.param';
 
-@Controller('favourites')
+@Controller('favs')
 export class FavouritesController {
   constructor(private readonly favouritesService: FavouritesService) {}
-
-  @Post()
-  create(@Body() createFavouriteDto: CreateFavouriteDto) {
-    return this.favouritesService.create(createFavouriteDto);
-  }
 
   @Get()
   findAll() {
     return this.favouritesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.favouritesService.findOne(+id);
+  @Post('track/:id')
+  addTrackById(@Param() { id }: ValidateUuidParam) {
+    return this.favouritesService.addToFavourites(id, 'tracks');
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateFavouriteDto: UpdateFavouriteDto,
-  ) {
-    return this.favouritesService.update(+id, updateFavouriteDto);
+  @Delete('track/:id')
+  @HttpCode(204)
+  removeTrackById(@Param() { id }: ValidateUuidParam) {
+    return this.favouritesService.removeFromFavourites(id, 'tracks');
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.favouritesService.remove(+id);
+  @Post('album/:id')
+  addAlbumById(@Param() { id }: ValidateUuidParam) {
+    return this.favouritesService.addToFavourites(id, 'albums');
+  }
+
+  @Delete('album/:id')
+  @HttpCode(204)
+  removeAlbumById(@Param() { id }: ValidateUuidParam) {
+    return this.favouritesService.removeFromFavourites(id, 'albums');
+  }
+
+  @Post('artist/:id')
+  addArtistById(@Param() { id }: ValidateUuidParam) {
+    return this.favouritesService.addToFavourites(id, 'artists');
+  }
+
+  @Delete('artist/:id')
+  @HttpCode(204)
+  removeArtistById(@Param() { id }: ValidateUuidParam) {
+    return this.favouritesService.removeFromFavourites(id, 'artists');
   }
 }

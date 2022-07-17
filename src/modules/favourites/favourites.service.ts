@@ -1,26 +1,72 @@
-import { Injectable } from '@nestjs/common';
-import { CreateFavouriteDto } from './dto/create-favourite.dto';
-import { UpdateFavouriteDto } from './dto/update-favourite.dto';
+import { HttpException, Injectable } from '@nestjs/common';
+
+import { StatusCodes } from 'http-status-codes';
+
+import { FavouritesRepository } from './favourites.repository';
+import { AlbumsService } from '../albums/albums.service';
+import { ArtistsService } from '../artists/artists.service';
+import { TracksService } from '../tracks/tracks.service';
+import { Favourite } from './entities/favourite.entity';
+
+type TFavouritesServices = AlbumsService | ArtistsService | TracksService;
 
 @Injectable()
 export class FavouritesService {
-  create(createFavouriteDto: CreateFavouriteDto) {
-    return 'This action adds a new favourite';
-  }
+  private readonly serviceMapper: Record<keyof Favourite, TFavouritesServices> =
+    {
+      artists: this.artistsService,
+      albums: this.albumsService,
+      tracks: this.tracksService,
+    };
+
+  constructor(
+    private albumsService: AlbumsService,
+    private artistsService: ArtistsService,
+    private tracksService: TracksService,
+  ) {}
 
   findAll() {
-    return `This action returns all favourites`;
+    const favouriteIds = FavouritesRepository.getAll();
+    const artists = this.artistsService
+      .findAll()
+      .filter((a) => favouriteIds.artists.has(a.id));
+    const albums = this.albumsService
+      .findAll()
+      .filter((a) => favouriteIds.albums.has(a.id));
+    const tracks = this.tracksService
+      .findAll()
+      .filter((t) => favouriteIds.tracks.has(t.id));
+
+    return {
+      artists,
+      albums,
+      tracks,
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} favourite`;
+  addToFavourites(id: string, favouriteType: keyof Favourite) {
+    const service = this.serviceMapper[favouriteType];
+    try {
+      const entity = service.findOne(id);
+      return FavouritesRepository.addToFavourites(entity.id, favouriteType);
+    } catch (e) {
+      throw new HttpException(e.message, StatusCodes.UNPROCESSABLE_ENTITY);
+    }
   }
 
-  update(id: number, updateFavouriteDto: UpdateFavouriteDto) {
-    return `This action updates a #${id} favourite`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} favourite`;
+  removeFromFavourites(id: string, favouriteType: keyof Favourite) {
+    const service = this.serviceMapper[favouriteType];
+    try {
+      const entity = service.findOne(id);
+      return FavouritesRepository.removeFromFavourites(
+        entity.id,
+        favouriteType,
+      );
+    } catch (e) {
+      throw new HttpException(
+        `${e.resourceName} not in favourites`,
+        StatusCodes.NOT_FOUND,
+      );
+    }
   }
 }
