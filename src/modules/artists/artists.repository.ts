@@ -35,7 +35,7 @@ export class ArtistsRepository {
       (track) => track.artistId === id,
     );
     if (trackByArtistId) {
-      Database.tracksTable.set(trackByArtistId?.id, {
+      Database.tracksTable.set(trackByArtistId.id, {
         ...trackByArtistId,
         artistId: null,
       });
@@ -43,12 +43,12 @@ export class ArtistsRepository {
   }
 
   private static removeFromAlbumsTable(id: string) {
-    const albumsById = Array.from(Database.albumsTable.values()).find(
+    const albumByArtistId = Array.from(Database.albumsTable.values()).find(
       (album) => album.artistId === id,
     );
-    if (albumsById) {
-      Database.albumsTable.set(albumsById?.id, {
-        ...albumsById,
+    if (albumByArtistId) {
+      Database.albumsTable.set(albumByArtistId.id, {
+        ...albumByArtistId,
         artistId: null,
       });
     }

@@ -30,7 +30,7 @@ export class ArtistsService {
   }
 
   remove(id: string) {
-    const user = this.findOne(id);
-    return ArtistsRepository.removeById(user.id);
+    const artist = this.findOne(id);
+    return ArtistsRepository.removeById(artist.id);
   }
 }

@@ -39,7 +39,7 @@ export class TracksService {
   }
 
   remove(id: string) {
-    const user = this.findOne(id);
-    return TracksRepository.removeById(user.id);
+    const track = this.findOne(id);
+    return TracksRepository.removeById(track.id);
   }
 }
