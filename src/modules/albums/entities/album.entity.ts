@@ -19,6 +19,6 @@ export class Album {
   year: number;
 
   @IsOptional()
-  @IsString()
+  @IsUUID()
   artistId: string | null;
 }

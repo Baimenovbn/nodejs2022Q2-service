@@ -1,26 +1,45 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAlbumDto } from './dto/create-album.dto';
+import { HttpException, Injectable } from '@nestjs/common';
 import { UpdateAlbumDto } from './dto/update-album.dto';
+import { ResourceNotFoundError } from '../../models/errors/resource-not-found.error';
+import { AlbumsRepository } from './albums.repository';
+import { CreateAlbumDto } from './dto/create-album.dto';
+import { StatusCodes } from 'http-status-codes';
 
 @Injectable()
 export class AlbumsService {
   create(createAlbumDto: CreateAlbumDto) {
-    return 'This action adds a new album';
+    try {
+      return AlbumsRepository.create(createAlbumDto);
+    } catch (e) {
+      throw new HttpException(e.message, StatusCodes.NOT_FOUND);
+    }
   }
 
   findAll() {
-    return `This action returns all albums`;
+    return AlbumsRepository.getAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} album`;
+  findOne(id: string) {
+    const album = AlbumsRepository.getById(id);
+    if (!album) throw new ResourceNotFoundError('Album');
+    return album;
   }
 
-  update(id: number, updateAlbumDto: UpdateAlbumDto) {
-    return `This action updates a #${id} album`;
+  update(id: string, updateAlbumDto: UpdateAlbumDto) {
+    const album = this.findOne(id);
+
+    try {
+      return AlbumsRepository.update(id, {
+        ...album,
+        ...updateAlbumDto,
+      });
+    } catch (e) {
+      throw new HttpException(e.message, StatusCodes.NOT_FOUND);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} album`;
+  remove(id: string) {
+    const album = this.findOne(id);
+    return AlbumsRepository.removeById(album.id);
   }
 }
