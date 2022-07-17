@@ -13,6 +13,7 @@ export class TracksRepository {
   }
 
   static removeById(id: string) {
+    Database.favouritesTable.tracks.delete(id);
     return Database.tracksTable.delete(id);
   }
 

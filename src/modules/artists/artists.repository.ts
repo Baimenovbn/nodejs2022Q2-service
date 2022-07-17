@@ -16,6 +16,7 @@ export class ArtistsRepository {
   static removeById(id: string) {
     this.removeFromTracksTable(id);
     this.removeFromAlbumsTable(id);
+    Database.favouritesTable.artists.delete(id);
     return Database.artistsTable.delete(id);
   }
 
