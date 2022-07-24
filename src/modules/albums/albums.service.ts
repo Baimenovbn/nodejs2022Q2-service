@@ -1,45 +1,43 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { ResourceNotFoundError } from '../../models/errors/resource-not-found.error';
-import { AlbumsRepository } from './albums.repository';
 import { CreateAlbumDto } from './dto/create-album.dto';
-import { StatusCodes } from 'http-status-codes';
+import { invalidForeignKeyWrapper } from '../../utils/invalid-foreign-key-wrapper';
+import { PrismaService } from '../../prisma.service';
 
 @Injectable()
 export class AlbumsService {
-  create(createAlbumDto: CreateAlbumDto) {
-    try {
-      return AlbumsRepository.create(createAlbumDto);
-    } catch (e) {
-      throw new HttpException(e.message, StatusCodes.NOT_FOUND);
-    }
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async create(data: CreateAlbumDto) {
+    return invalidForeignKeyWrapper(() =>
+      this.prismaService.album.create({ data }),
+    );
   }
 
   findAll() {
-    return AlbumsRepository.getAll();
+    return this.prismaService.album.findMany();
   }
 
-  findOne(id: string) {
-    const album = AlbumsRepository.getById(id);
+  async findOne(id: string) {
+    const album = await this.prismaService.album.findUnique({ where: { id } });
     if (!album) throw new ResourceNotFoundError('Album');
     return album;
   }
 
-  update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    const album = this.findOne(id);
+  async update(id: string, updateAlbumDto: UpdateAlbumDto) {
+    const album = await this.findOne(id);
 
-    try {
-      return AlbumsRepository.update(id, {
-        ...album,
-        ...updateAlbumDto,
-      });
-    } catch (e) {
-      throw new HttpException(e.message, StatusCodes.NOT_FOUND);
-    }
+    return invalidForeignKeyWrapper(() =>
+      this.prismaService.album.update({
+        where: { id: album.id },
+        data: updateAlbumDto,
+      }),
+    );
   }
 
-  remove(id: string) {
-    const album = this.findOne(id);
-    return AlbumsRepository.removeById(album.id);
+  async remove(id: string) {
+    const album = await this.findOne(id);
+    return this.prismaService.album.delete({ where: { id: album.id } });
   }
 }

@@ -8,8 +8,6 @@ services:
       target: development
     volumes:
       - ./src:/app/src
-      - ./node_modules/@prisma/client:/app/node_modules/@prisma/client
-      - /app/node_modules/
     ports:
       - ${PORT}:${PORT}
     command: npm run docker:start:dev
