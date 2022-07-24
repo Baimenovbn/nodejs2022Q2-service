@@ -1,4 +1,3 @@
-import { Track } from '../modules/tracks/entities/track.entity';
 import { Album } from '../modules/albums/entities/album.entity';
 import { Artist } from '../modules/artists/entities/artist.entity';
 import { ForeignKeyIsNotValid } from './errors/foreign-key-is-not-valid';
@@ -7,7 +6,6 @@ import { Favourite } from '../modules/favourites/entities/favourite.entity';
 type tables = 'tracksTable' | 'usersTable' | 'albumsTable' | 'artistsTable';
 
 export class Database {
-  public static readonly tracksTable = new Map<string, Track>();
   public static readonly albumsTable = new Map<string, Album>();
   public static readonly artistsTable = new Map<string, Artist>();
   public static readonly favouritesTable: Record<keyof Favourite, Set<string>> =

@@ -1,45 +1,43 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { ResourceNotFoundError } from '../../models/errors/resource-not-found.error';
-import { TracksRepository } from './tracks.repository';
-import { StatusCodes } from 'http-status-codes';
+import { PrismaService } from '../../prisma.service';
+import { invalidForeignKeyWrapper } from '../../utils/invalid-foreign-key-wrapper';
 
 @Injectable()
 export class TracksService {
-  create(createTrackDto: CreateTrackDto) {
-    try {
-      return TracksRepository.create(createTrackDto);
-    } catch (e) {
-      throw new HttpException(e.message, StatusCodes.NOT_FOUND);
-    }
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async create(data: CreateTrackDto) {
+    return invalidForeignKeyWrapper(() =>
+      this.prismaService.track.create({ data }),
+    );
   }
 
   findAll() {
-    return TracksRepository.getAll();
+    return this.prismaService.track.findMany();
   }
 
-  findOne(id: string) {
-    const track = TracksRepository.getById(id);
+  async findOne(id: string) {
+    const track = await this.prismaService.track.findUnique({ where: { id } });
     if (!track) throw new ResourceNotFoundError('Track');
     return track;
   }
 
-  update(id: string, updateTrackDto: UpdateTrackDto) {
-    const track = this.findOne(id);
+  async update(id: string, updateTrackDto: UpdateTrackDto) {
+    const track = await this.findOne(id);
 
-    try {
-      return TracksRepository.update(id, {
-        ...track,
-        ...updateTrackDto,
-      });
-    } catch (e) {
-      throw new HttpException(e.message, StatusCodes.NOT_FOUND);
-    }
+    return invalidForeignKeyWrapper(() =>
+      this.prismaService.track.update({
+        where: { id: track.id },
+        data: updateTrackDto,
+      }),
+    );
   }
 
-  remove(id: string) {
-    const track = this.findOne(id);
-    return TracksRepository.removeById(track.id);
+  async remove(id: string) {
+    const track = await this.findOne(id);
+    return this.prismaService.track.delete({ where: { id: track.id } });
   }
 }

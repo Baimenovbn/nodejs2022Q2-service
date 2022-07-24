@@ -14,8 +14,6 @@ export class AlbumsRepository {
   }
 
   static removeById(id: string) {
-    this.removeFromTracksTable(id);
-    Database.favouritesTable.albums.delete(id);
     return Database.albumsTable.delete(id);
   }
 
@@ -30,17 +28,5 @@ export class AlbumsRepository {
     Database.throwIfNotInTable(updatedAlbum.artistId, 'artistsTable', 'Artist');
     Database.albumsTable.set(id, updatedAlbum);
     return updatedAlbum;
-  }
-
-  private static removeFromTracksTable(id: string) {
-    const trackByAlbumId = Array.from(Database.tracksTable.values()).find(
-      (track) => track.albumId === id,
-    );
-    if (trackByAlbumId) {
-      Database.tracksTable.set(trackByAlbumId.id, {
-        ...trackByAlbumId,
-        albumId: null,
-      });
-    }
   }
 }

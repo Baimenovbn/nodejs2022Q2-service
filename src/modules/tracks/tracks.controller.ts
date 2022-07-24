@@ -12,24 +12,23 @@ import { TracksService } from './tracks.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { ValidateUuidParam } from '../../models/pipes/validate-uuid.param';
-import { Track } from './entities/track.entity';
 
 @Controller('track')
 export class TracksController {
   constructor(private readonly tracksService: TracksService) {}
 
   @Post()
-  create(@Body() createTrackDto: CreateTrackDto): Track {
-    return this.tracksService.create(createTrackDto);
+  async create(@Body() createTrackDto: CreateTrackDto) {
+    return await this.tracksService.create(createTrackDto);
   }
 
   @Get()
-  findAll(): Track[] {
+  findAll() {
     return this.tracksService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param() { id }: ValidateUuidParam): Track {
+  findOne(@Param() { id }: ValidateUuidParam) {
     return this.tracksService.findOne(id);
   }
 
@@ -37,7 +36,7 @@ export class TracksController {
   update(
     @Param() { id }: ValidateUuidParam,
     @Body() updateTrackDto: UpdateTrackDto,
-  ): Track {
+  ) {
     return this.tracksService.update(id, updateTrackDto);
   }
 
