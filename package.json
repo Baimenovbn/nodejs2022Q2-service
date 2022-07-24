@@ -19,7 +19,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "docker:start:dev": "npx prisma generate && prisma migrate dev && npx prisma migrate deploy && nest start --watch",
+    "docker:start:dev": "npx prisma generate && prisma migrate deploy && nest start --watch",
     "docker:scan:db": "docker scan strefian/nodejs2022q2-nestjs-postgresql",
     "docker:scan:app": "docker scan strefian/nodejs2022q2-nestjs"
   },
