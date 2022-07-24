@@ -36,16 +36,26 @@ npm start
 ## Running in docker:
 
 ### Development mode:
-* Go to *root* directory of the project
-* ```docker-compose up```
-* Enjoy the app
+
+#### Applying migrations:
+1. ```docker container ls```
+2. Find the CONTAINER_ID of the image with name "nodejs2022q2-service_app"
+3. Copy CONTAINER_ID
+4. ```docker exec -it CONTAINER_ID /bin/sh```
+5. npx prisma migrate dev
+6. Migrations applied
+
+#### First run:
+1. Go to *root* directory of the project
+2. ```docker-compose up```
+3. Make steps from Applying migrations section
 
 ### Production mode:
-* Open *docker-compose.yml* in *root* dir
-* Delete line 8
-* Change line 13 to command: *npm run start:prod* 
-* ```docker-compose up```
-* Enjoy the app
+1. Open *docker-compose.yml* in *root* dir
+2. Delete line 8
+3. Change line 13 to command: *npm run start:prod* 
+4. ```docker-compose up```
+5. Make steps from Applying migrations section
 
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
