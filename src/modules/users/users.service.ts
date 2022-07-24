@@ -19,7 +19,14 @@ export class UsersService {
   }
 
   async create(data: CreateUserDto) {
-    const createdUser = await this.prismaService.user.create({ data });
+    const now = new Date();
+    const createdUser = await this.prismaService.user.create({
+      data: {
+        ...data,
+        createdAt: now,
+        updatedAt: now,
+      },
+    });
     return UsersService.toInstance(createdUser);
   }
 

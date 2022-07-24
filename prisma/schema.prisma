@@ -12,8 +12,8 @@ model User {
   login     String
   password  String
   version   Int      @default(1)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime
+  updatedAt DateTime
 }
 
 model Track {
@@ -26,17 +26,17 @@ model Track {
 
   album   Album?  @relation("AlbumTracks", fields: [albumId], references: [id])
   albumId String?
-
-  favourites   Favourites? @relation("FavouriteTracks", fields: [favouritesId], references: [id])
-  favouritesId String?
 }
 
 model Favourites {
-  id String @id @default(uuid())
+  id    String @id
+  favouriteType  FavouriteType
+}
 
-  artists Artist[] @relation("FavouriteArtists")
-  albums  Album[]  @relation("FavouriteAlbums")
-  tracks  Track[]  @relation("FavouriteTracks")
+enum FavouriteType {
+  artists
+  albums
+  tracks
 }
 
 model Artist {
@@ -46,9 +46,6 @@ model Artist {
 
   tracks Track[] @relation("ArtistTracks")
   albums Album[] @relation("ArtistAlbums")
-
-  favourites   Favourites? @relation("FavouriteArtists", fields: [favouritesId], references: [id])
-  favouritesId String?
 }
 
 model Album {
@@ -59,7 +56,4 @@ model Album {
 
   artist   Artist? @relation("ArtistAlbums", fields: [artistId], references: [id])
   artistId String?
-
-  favourites   Favourites? @relation("FavouriteAlbums", fields: [favouritesId], references: [id])
-  favouritesId String?
 }

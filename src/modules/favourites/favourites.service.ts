@@ -2,11 +2,11 @@ import { HttpException, Injectable } from '@nestjs/common';
 
 import { StatusCodes } from 'http-status-codes';
 
-import { FavouritesRepository } from './favourites.repository';
+import { Favourite } from './entities/favourite.entity';
+import { PrismaService } from '../../prisma.service';
 import { AlbumsService } from '../albums/albums.service';
 import { ArtistsService } from '../artists/artists.service';
 import { TracksService } from '../tracks/tracks.service';
-import { Favourite } from './entities/favourite.entity';
 
 type TFavouritesServices = AlbumsService | ArtistsService | TracksService;
 
@@ -18,50 +18,72 @@ export class FavouritesService {
       albums: this.albumsService,
       tracks: this.tracksService,
     };
-
   constructor(
+    private readonly prismaService: PrismaService,
     private albumsService: AlbumsService,
     private artistsService: ArtistsService,
     private tracksService: TracksService,
   ) {}
 
-  findAll() {
-    const favouriteIds = FavouritesRepository.getAll();
-    const artists = this.artistsService
-      .findAll()
-      .filter((a) => favouriteIds.artists.has(a.id));
-    const albums = this.albumsService
-      .findAll()
-      .filter((a) => favouriteIds.albums.has(a.id));
-    const tracks = this.tracksService
-      .findAll()
-      .filter((t) => favouriteIds.tracks.has(t.id));
+  async findAll() {
+    const [artistIds, albumIds, trackIds] = await Promise.all([
+      this.prismaService.favourites.findMany({
+        where: { favouriteType: { equals: 'artists' } },
+      }),
+      this.prismaService.favourites.findMany({
+        where: { favouriteType: { equals: 'albums' } },
+      }),
+      this.prismaService.favourites.findMany({
+        where: { favouriteType: { equals: 'tracks' } },
+      }),
+    ]);
+
+    const [artists, albums, tracks] = await Promise.all([
+      this.prismaService.artist.findMany({
+        where: {
+          id: { in: artistIds.map((fav) => fav.id) },
+        },
+      }),
+      this.prismaService.album.findMany({
+        where: {
+          id: { in: albumIds.map((fav) => fav.id) },
+        },
+      }),
+      this.prismaService.track.findMany({
+        where: {
+          id: { in: trackIds.map((fav) => fav.id) },
+        },
+      }),
+    ]);
 
     return {
-      artists,
-      albums,
       tracks,
+      albums,
+      artists,
     };
   }
 
-  addToFavourites(id: string, favouriteType: keyof Favourite) {
+  async addToFavourites(id: string, favouriteType: keyof Favourite) {
     const service = this.serviceMapper[favouriteType];
+
     try {
-      const entity = service.findOne(id);
-      return FavouritesRepository.addToFavourites(entity.id, favouriteType);
+      const entity = await service.findOne(id);
+      return await this.prismaService.favourites.create({
+        data: {
+          id: entity.id,
+          favouriteType,
+        },
+      });
     } catch (e) {
       throw new HttpException(e.message, StatusCodes.UNPROCESSABLE_ENTITY);
     }
   }
 
-  removeFromFavourites(id: string, favouriteType: keyof Favourite) {
+  async removeFromFavourites(id: string, favouriteType: keyof Favourite) {
     const service = this.serviceMapper[favouriteType];
     try {
-      const entity = service.findOne(id);
-      return FavouritesRepository.removeFromFavourites(
-        entity.id,
-        favouriteType,
-      );
+      const entity = await service.findOne(id);
+      return this.prismaService.favourites.delete({ where: { id: entity.id } });
     } catch (e) {
       throw new HttpException(
         `${e.resourceName} not in favourites`,

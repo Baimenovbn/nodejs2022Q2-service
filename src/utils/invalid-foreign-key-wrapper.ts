@@ -5,7 +5,6 @@ export const invalidForeignKeyWrapper = async <T>(cb: () => Promise<T>) => {
   try {
     return await cb();
   } catch (e) {
-    console.log(e);
     throw new ForeignKeyIsNotValid(getForeignKeyNotValidField(e));
   }
 };

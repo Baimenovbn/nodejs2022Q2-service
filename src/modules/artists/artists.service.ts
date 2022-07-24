@@ -19,8 +19,10 @@ export class ArtistsService {
     return this.prismaService.artist.findMany();
   }
 
-  findOne(id: string) {
-    const artist = this.prismaService.artist.findUnique({ where: { id } });
+  async findOne(id: string) {
+    const artist = await this.prismaService.artist.findUnique({
+      where: { id },
+    });
     if (!artist) throw new ResourceNotFoundError('Artist');
     return artist;
   }
