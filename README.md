@@ -21,7 +21,7 @@ git clone {repository URL}
 npm install
 ```
 
-## Environment configuring
+## Environment configure
 * Change *.env.example* filename to *.env*
 * Set necessary variables correspondingly
 
@@ -36,19 +36,10 @@ npm start
 ## Running in docker:
 
 ### Development mode:
-
-#### Applying migrations:
-1. ```docker container ls```
-2. Find the CONTAINER_ID of the image with name "nodejs2022q2-service_app"
-3. Copy CONTAINER_ID
-4. ```docker exec -it CONTAINER_ID /bin/sh```
-5. npx prisma migrate dev
-6. Migrations applied
-
-#### First run:
-1. Go to *root* directory of the project
-2. ```docker-compose up```
-3. Make steps from Applying migrations section
+1. Open command line (Windows "Fn + R" -> cmd.exe -> "Enter")
+2. Go to *root* directory of the project
+3. ```docker-compose up```
+4. Make steps from Applying migrations section
 
 ### Production mode:
 1. Open *docker-compose.yml* in *root* dir
@@ -56,6 +47,22 @@ npm start
 3. Change line 13 to command: *npm run start:prod* 
 4. ```docker-compose up```
 5. Make steps from Applying migrations section
+
+
+#### Applying migrations:
+1. ```docker container ls```
+2. Find the CONTAINER_ID of the image with name "nodejs2022q2-service_app"
+3. Copy CONTAINER_ID
+4. ```docker exec -it CONTAINER_ID /bin/sh```
+5. npx prisma migrate dev
+6. Enjoy the app
+
+#### Testing the application:
+1. ```docker container ls```
+2. Find the CONTAINER_ID of the image with name "nodejs2022q2-service_app"
+3. Copy CONTAINER_ID
+4. ```docker exec -it CONTAINER_ID /bin/sh```
+5. ```npm run test```
 
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
