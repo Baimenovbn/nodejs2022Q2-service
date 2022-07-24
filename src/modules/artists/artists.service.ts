@@ -1,36 +1,43 @@
 import { Injectable } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import { ArtistsRepository } from './artists.repository';
 import { ResourceNotFoundError } from '../../models/errors/resource-not-found.error';
+import { PrismaService } from '../../prisma.service';
+import { invalidForeignKeyWrapper } from '../../utils/invalid-foreign-key-wrapper';
 
 @Injectable()
 export class ArtistsService {
-  create(createArtistDto: CreateArtistDto) {
-    return ArtistsRepository.create(createArtistDto);
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async create(data: CreateArtistDto) {
+    return invalidForeignKeyWrapper(() =>
+      this.prismaService.artist.create({ data }),
+    );
   }
 
   findAll() {
-    return ArtistsRepository.getAll();
+    return this.prismaService.artist.findMany();
   }
 
   findOne(id: string) {
-    const artist = ArtistsRepository.getById(id);
+    const artist = this.prismaService.artist.findUnique({ where: { id } });
     if (!artist) throw new ResourceNotFoundError('Artist');
     return artist;
   }
 
-  update(id: string, updateArtistDto: UpdateArtistDto) {
-    const artist = this.findOne(id);
+  async update(id: string, updateArtistDto: UpdateArtistDto) {
+    const artist = await this.findOne(id);
 
-    return ArtistsRepository.update(id, {
-      ...artist,
-      ...updateArtistDto,
-    });
+    return invalidForeignKeyWrapper(() =>
+      this.prismaService.artist.update({
+        where: { id: artist.id },
+        data: updateArtistDto,
+      }),
+    );
   }
 
-  remove(id: string) {
-    const artist = this.findOne(id);
-    return ArtistsRepository.removeById(artist.id);
+  async remove(id: string) {
+    const artist = await this.findOne(id);
+    return this.prismaService.artist.delete({ where: { id: artist.id } });
   }
 }

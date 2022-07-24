@@ -6,10 +6,17 @@ import {
   ArtistsModule,
   TracksModule,
   UsersModule,
+  FavouritesModule,
 } from './modules';
 
 @Module({
-  imports: [UsersModule, ArtistsModule, TracksModule, AlbumsModule],
+  imports: [
+    FavouritesModule,
+    UsersModule,
+    ArtistsModule,
+    TracksModule,
+    AlbumsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
