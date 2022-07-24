@@ -23,19 +23,19 @@ export class UsersController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Post()
-  create(@Body() createUserDto: CreateUserDto): User {
+  create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.usersService.create(createUserDto);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
-  findAll(): User[] {
+  findAll(): Promise<User[]> {
     return this.usersService.findAll();
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
-  findOne(@Param() { id }: ValidateUuidParam): User {
+  findOne(@Param() { id }: ValidateUuidParam) {
     return this.usersService.findOne(id);
   }
 
@@ -44,7 +44,7 @@ export class UsersController {
   update(
     @Param() { id }: ValidateUuidParam,
     @Body() updateUserDto: UpdateUserDto,
-  ): User {
+  ) {
     return this.usersService.update(id, updateUserDto);
   }
 
