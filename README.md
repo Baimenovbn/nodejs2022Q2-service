@@ -7,7 +7,12 @@
 
 ## Running in docker prerequisites
 - Git - [Download & Install Git](https://git-scm.com/downloads).
-- Docker - [Download & Install Docker](https://docs.docker.com/desktop/install/mac-install/)  depends on your OS
+- Docker - [Download & Install Docker](https://docs.docker.com/desktop/install/mac-install/)  depends on your OS.
+
+### Warning! Use 2nd version of docker-compose. You can change it in Docker Desktop:
+ 1. Open Docker Desktop
+ 2. Go to Settings -> General
+ 3. Check "Use Docker Compose V2" checkbox
 
 ## Downloading
 
