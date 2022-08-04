@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { ResourceNotFoundError } from '../../models/errors/resource-not-found.error';
-import { PrismaService } from '../../prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { invalidForeignKeyWrapper } from '../../utils/invalid-foreign-key-wrapper';
 
 @Injectable()
