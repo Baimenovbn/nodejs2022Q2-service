@@ -7,7 +7,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ResourceNotFoundError } from '../../models/errors/resource-not-found.error';
 import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
 import { User } from './entities/user.entity';
-import { PrismaService } from '../../prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { plainToInstance } from 'class-transformer';
 
 @Injectable()
@@ -52,6 +52,12 @@ export class UsersService {
   async remove(id: string) {
     const user = await this.findOne(id);
     return this.prismaService.user.delete({ where: { id: user.id } });
+  }
+
+  async getUserByLogin(user: CreateUserDto) {
+    return this.prismaService.user.findFirst({
+      where: { login: user.login },
+    });
   }
 
   private async getUserById(id: string) {
