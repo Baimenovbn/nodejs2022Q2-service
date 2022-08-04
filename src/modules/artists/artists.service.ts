@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { ResourceNotFoundError } from '../../models/errors/resource-not-found.error';
-import { PrismaService } from '../../prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { invalidForeignKeyWrapper } from '../../utils/invalid-foreign-key-wrapper';
 
 @Injectable()

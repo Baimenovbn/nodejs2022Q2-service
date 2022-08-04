@@ -7,13 +7,16 @@ import {
   Delete,
   HttpCode,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { ArtistsService } from './artists.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { ValidateUuidParam } from '../../models/pipes/validate-uuid.param';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('artist')
+@UseGuards(AuthGuard('jwt'))
 export class ArtistsController {
   constructor(private readonly artistsService: ArtistsService) {}
 
