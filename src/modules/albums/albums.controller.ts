@@ -7,14 +7,17 @@ import {
   Delete,
   Put,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 
 import { AlbumsService } from './albums.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { ValidateUuidParam } from '../../models/pipes/validate-uuid.param';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('album')
+@UseGuards(AuthGuard('jwt'))
 export class AlbumsController {
   constructor(private readonly albumsService: AlbumsService) {}
 

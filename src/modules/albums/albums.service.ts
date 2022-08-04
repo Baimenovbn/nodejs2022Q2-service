@@ -3,7 +3,7 @@ import { UpdateAlbumDto } from './dto/update-album.dto';
 import { ResourceNotFoundError } from '../../models/errors/resource-not-found.error';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { invalidForeignKeyWrapper } from '../../utils/invalid-foreign-key-wrapper';
-import { PrismaService } from '../../prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AlbumsService {
