@@ -22,4 +22,4 @@ const runSwagger = async (app: INestApplication) => {
   SwaggerModule.setup('/doc', app, doc);
 };
 
-bootstrap();
+bootstrap().then();
