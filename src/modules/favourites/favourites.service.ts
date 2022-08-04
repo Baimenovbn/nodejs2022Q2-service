@@ -3,7 +3,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
 
 import { Favourite } from './entities/favourite.entity';
-import { PrismaService } from '../../prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { AlbumsService } from '../albums/albums.service';
 import { ArtistsService } from '../artists/artists.service';
 import { TracksService } from '../tracks/tracks.service';
