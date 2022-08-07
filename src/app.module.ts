@@ -9,6 +9,8 @@ import {
   TracksModule,
   UsersModule,
 } from './modules';
+import { LoggerModule } from './modules/logger/logger.module';
+import { CoreModule } from './modules/core/core.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import {
     FavouritesModule,
     TracksModule,
     UsersModule,
+    LoggerModule,
+    CoreModule,
   ],
   controllers: [AppController],
   providers: [AppService],
