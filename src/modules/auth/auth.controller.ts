@@ -1,7 +1,6 @@
-import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { AuthService, JwtTokens } from './auth.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { RefreshTokens } from './refresh-tokens';
 import { ValidateRefreshTokenPipe } from './jwt/validate-refresh-token.pipe';
 
@@ -23,7 +22,6 @@ export class AuthController {
 
   @Post('refresh')
   @HttpCode(200)
-  @UseGuards(AuthGuard('jwt'))
   refresh(@Body(ValidateRefreshTokenPipe) { refreshToken }: RefreshTokens) {
     return this.authService.refreshTokens(refreshToken);
   }

@@ -9,6 +9,7 @@ services:
     volumes:
       - ./src:/app/src
       - ./prisma:/app/prisma
+      - ./logs:/app/logs
     ports:
       - ${PORT}:${PORT}
     command: npm run docker:start:dev
